@@ -19,7 +19,15 @@ public class SecurityConfig {
     http.csrf(AbstractHttpConfigurer::disable)
         .cors(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/auth/**").permitAll() // all /auth endpoints can be access without authentication
+            // all /auth endpoints can be accessible
+            .requestMatchers("/auth/**").permitAll()
+            // allow accessing swagger-ui
+            .requestMatchers(
+                "/swagger-ui/**",
+                "/swagger-ui.html",
+                "/v3/api-docs/**",
+                "/webjars/**"
+            ).permitAll()
             .anyRequest().authenticated()) // other than that need auth
         .sessionManagement(auth -> auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
