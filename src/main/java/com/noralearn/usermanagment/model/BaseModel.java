@@ -14,5 +14,6 @@ public abstract class BaseModel {
   @CreationTimestamp
   private ZonedDateTime createdAt;
 
+  @CreationTimestamp
   private ZonedDateTime updatedAt;
 }
