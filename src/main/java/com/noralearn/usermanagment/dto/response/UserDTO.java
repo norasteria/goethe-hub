@@ -1,6 +1,5 @@
 package com.noralearn.usermanagment.dto.response;
 
-import jakarta.validation.constraints.Email;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,4 +22,5 @@ public class UserDTO {
 
   private boolean isActive;
 
+  private String roleName;
 }

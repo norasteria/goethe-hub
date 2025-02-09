@@ -1,11 +1,16 @@
 package com.noralearn.usermanagment.model;
 
+import com.noralearn.usermanagment.bean.IAuthenticable;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,7 +28,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Users extends BaseModel {
+@Table(name = "users")
+public class User extends BaseModel implements IAuthenticable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -48,5 +54,9 @@ public class Users extends BaseModel {
 
   @Nullable
   private ZonedDateTime resetTokenExpiry;
+
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "role_id", nullable = false)
+  private Role role;
 
 }
