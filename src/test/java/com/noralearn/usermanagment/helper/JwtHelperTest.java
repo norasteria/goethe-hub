@@ -10,15 +10,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts.SIG;
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class JwtHelperTest {
   private JwtHelper jwtHelper;
-  private String accessTokenSecret = SIG.HS256.key().build().toString();
-  private String refreshTokenSecret = SIG.HS256.key().build().toString();
+
+  private final String accessTokenSecret = SIG.HS256.key().build().toString();
+
+  private final String refreshTokenSecret = SIG.HS256.key().build().toString();
 
   @BeforeEach
   void setUp() {
@@ -83,9 +84,5 @@ class JwtHelperTest {
         1000 // 1s delay as tolerance after generate token and make expectedExpiredTime
     );
 
-  }
-
-  @Test
-  void extractClaim() {
   }
 }

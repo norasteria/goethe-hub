@@ -32,7 +32,7 @@ public class LoginService {
     this.ipAddress = this.getIpAddress(servletRequest);
     this.deviceType = requestDTO.getDeviceType();
 
-    User selectedUser = this.validateLogin(requestDTO, servletRequest);
+    User selectedUser = this.validateLogin(requestDTO);
 
     final AuthToken accessToken = this.jwtHelper.generateAccessToken(selectedUser);
     final AuthToken refreshToken = this.jwtHelper.generateRefreshToken(selectedUser);
@@ -49,7 +49,7 @@ public class LoginService {
         .build();
   }
 
-  private User validateLogin(LoginRequestDTO loginRequestDTO,  HttpServletRequest servletRequest){
+  private User validateLogin(LoginRequestDTO loginRequestDTO){
     User selectedUser = usersRepository
         .findByEmail(loginRequestDTO.getEmail())
         .orElseThrow(() -> {
