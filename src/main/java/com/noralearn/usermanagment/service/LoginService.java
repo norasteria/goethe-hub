@@ -11,6 +11,7 @@ import com.noralearn.usermanagment.model.User;
 import com.noralearn.usermanagment.repository.LoginActivityRepository;
 import com.noralearn.usermanagment.repository.UsersRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import java.time.ZonedDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -54,12 +55,29 @@ public class LoginService {
         .findByEmail(loginRequestDTO.getEmail())
         .orElseThrow(() -> {
           this.saveLoginActivity(LoginStatus.FAILED, null);
-          return new AuthenticationException("No email found");
+          return new AuthenticationException("No email found.");
         });
+
+    if (!selectedUser.isActive()) {
+      // TODO: need to handle proper reactivation
+      throw new AuthenticationException("Can't login non-active account.");
+    }
+
+    final int countTodayFailedTodayLogin = this.loginActivityRepository.countFailedLoginAttemptsToday(
+        selectedUser.getId(),
+        LoginStatus.FAILED.name()
+    );
+
+    if (countTodayFailedTodayLogin > 2) {
+      this.saveLoginActivity(LoginStatus.SUSPENDED, selectedUser);
+      selectedUser.setActive(false);
+      this.usersRepository.save(selectedUser);
+      throw new AuthenticationException("This account has been suspended.");
+    }
 
     final boolean isPasswordMatch = this.passwordEncoder.matches(loginRequestDTO.getPassword(), selectedUser.getPassword());
 
-    if (!isPasswordMatch){
+    if (!isPasswordMatch) {
       this.saveLoginActivity(LoginStatus.FAILED, selectedUser);
       throw new AuthenticationException();
     }

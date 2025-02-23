@@ -9,4 +9,6 @@ public interface UsersRepository extends CrudRepository<User, UUID> {
 
   Optional<User> findByEmail(String email);
 
+  Optional<User> findByEmailAndIsActive(String email, boolean isActive);
+
 }
