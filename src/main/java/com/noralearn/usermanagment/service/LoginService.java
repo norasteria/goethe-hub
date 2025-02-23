@@ -11,7 +11,6 @@ import com.noralearn.usermanagment.model.User;
 import com.noralearn.usermanagment.repository.LoginActivityRepository;
 import com.noralearn.usermanagment.repository.UsersRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import java.time.ZonedDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -75,7 +74,10 @@ public class LoginService {
       throw new AuthenticationException("This account has been suspended.");
     }
 
-    final boolean isPasswordMatch = this.passwordEncoder.matches(loginRequestDTO.getPassword(), selectedUser.getPassword());
+    final boolean isPasswordMatch = this.passwordEncoder.matches(
+        loginRequestDTO.getPassword(),
+        selectedUser.getPassword()
+    );
 
     if (!isPasswordMatch) {
       this.saveLoginActivity(LoginStatus.FAILED, selectedUser);

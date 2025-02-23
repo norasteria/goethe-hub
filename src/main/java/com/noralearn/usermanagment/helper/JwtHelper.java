@@ -72,9 +72,9 @@ public class JwtHelper {
           .build()
           .parseSignedClaims(token)
           .getPayload();
-    } catch(ExpiredJwtException ex){
+    } catch (ExpiredJwtException ex) {
       throw new ExpiredTokenException();
-    } catch (SignatureException ex){
+    } catch (SignatureException ex) {
       throw new InvalidSignatureException();
     } catch (Exception ex){
       throw new AuthenticationException(ex.getMessage());
@@ -95,8 +95,6 @@ public class JwtHelper {
       .expiration(Date.from(expiredTime.toInstant()))
       .signWith(tokenSecret, SIG.HS256)
       .compact();
-
-  log.info("GENERATED TOKEN: %s".formatted(token));
 
   return AuthToken.builder()
       .token(token)
