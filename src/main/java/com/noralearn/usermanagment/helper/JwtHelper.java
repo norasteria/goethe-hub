@@ -10,6 +10,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Jwts.SIG;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import java.nio.charset.StandardCharsets;
@@ -39,13 +40,13 @@ public class JwtHelper {
       @Value("${security.token.issuer}") String tokenIssuer,
       @Value("${security.token.access-secret}") String accessSecretKey,
       @Value("${security.token.refresh-secret}") String refreshSecretKey
-  ){
+  ) {
     this.tokenIssuer = tokenIssuer;
     this.accessTokenSecret = Keys.hmacShaKeyFor(accessSecretKey.getBytes(StandardCharsets.UTF_8));
     this.refreshTokenSecret = Keys.hmacShaKeyFor(refreshSecretKey.getBytes(StandardCharsets.UTF_8));
   }
 
-  public AuthToken generateAccessToken(IAuthenticable authEntity){
+  public AuthToken generateAccessToken(IAuthenticable authEntity) {
     return this.generateToken(
         authEntity,
         ACCESS_TOKEN_EXPIRY_TIME,
@@ -54,7 +55,7 @@ public class JwtHelper {
     );
   }
 
-  public AuthToken generateRefreshToken(IAuthenticable authEntity){
+  public AuthToken generateRefreshToken(IAuthenticable authEntity) {
     return this.generateToken(
         authEntity,
         REFRESH_TOKEN_EXPIRY_TIME,
@@ -63,7 +64,7 @@ public class JwtHelper {
     );
   }
 
-  public Claims extractClaim(String token, TokenType tokenType){
+  public Claims extractClaim(String token, TokenType tokenType) {
     try {
       SecretKey secretKey = this.getSecretKey(tokenType);
 
@@ -74,14 +75,14 @@ public class JwtHelper {
           .getPayload();
     } catch (ExpiredJwtException ex) {
       throw new ExpiredTokenException();
-    } catch (SignatureException ex) {
+    } catch (SignatureException | MalformedJwtException ex) {
       throw new InvalidSignatureException();
     } catch (Exception ex){
       throw new AuthenticationException(ex.getMessage());
     }
   }
 
-  private AuthToken generateToken(IAuthenticable authEntity, Duration duration, SecretKey tokenSecret, TokenType tokenType){
+  private AuthToken generateToken(IAuthenticable authEntity, Duration duration, SecretKey tokenSecret, TokenType tokenType) {
   final ZonedDateTime now = ZonedDateTime.now();
   final ZonedDateTime expiredTime = now.plus(duration);
 
@@ -103,11 +104,10 @@ public class JwtHelper {
   }
 
 
-  private SecretKey getSecretKey(TokenType tokenType){
+  private SecretKey getSecretKey(TokenType tokenType) {
    return switch (tokenType){
       case USER_TOKEN -> this.accessTokenSecret;
       case REFRESH_TOKEN -> this.refreshTokenSecret;
    };
   }
-
 }
