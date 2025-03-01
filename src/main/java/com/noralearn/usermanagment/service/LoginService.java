@@ -54,12 +54,32 @@ public class LoginService {
         .findByEmail(loginRequestDTO.getEmail())
         .orElseThrow(() -> {
           this.saveLoginActivity(LoginStatus.FAILED, null);
-          return new AuthenticationException("No email found");
+          return new AuthenticationException("No email found.");
         });
 
-    final boolean isPasswordMatch = this.passwordEncoder.matches(loginRequestDTO.getPassword(), selectedUser.getPassword());
+    if (!selectedUser.isActive()) {
+      // TODO: need to handle proper reactivation
+      throw new AuthenticationException("Can't login non-active account.");
+    }
 
-    if (!isPasswordMatch){
+    final int countTodayFailedTodayLogin = this.loginActivityRepository.countFailedLoginAttemptsToday(
+        selectedUser.getId(),
+        LoginStatus.FAILED.name()
+    );
+
+    if (countTodayFailedTodayLogin > 2) {
+      this.saveLoginActivity(LoginStatus.SUSPENDED, selectedUser);
+      selectedUser.setActive(false);
+      this.usersRepository.save(selectedUser);
+      throw new AuthenticationException("This account has been suspended.");
+    }
+
+    final boolean isPasswordMatch = this.passwordEncoder.matches(
+        loginRequestDTO.getPassword(),
+        selectedUser.getPassword()
+    );
+
+    if (!isPasswordMatch) {
       this.saveLoginActivity(LoginStatus.FAILED, selectedUser);
       throw new AuthenticationException();
     }

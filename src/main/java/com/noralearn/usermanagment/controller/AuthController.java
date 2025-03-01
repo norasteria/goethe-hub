@@ -1,11 +1,13 @@
 package com.noralearn.usermanagment.controller;
 
 import com.noralearn.usermanagment.dto.request.LoginRequestDTO;
+import com.noralearn.usermanagment.dto.request.RefreshTokenRequestDTO;
 import com.noralearn.usermanagment.dto.request.RegisterRequestDTO;
 import com.noralearn.usermanagment.dto.response.LoginResponseDTO;
 import com.noralearn.usermanagment.factory.ApiResponseFactory;
 import com.noralearn.usermanagment.dto.response.UserDTO;
 import com.noralearn.usermanagment.service.LoginService;
+import com.noralearn.usermanagment.service.RefreshTokenService;
 import com.noralearn.usermanagment.service.RegistrationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -26,6 +28,7 @@ public class AuthController {
   private final RegistrationService registrationService;
 
   private final LoginService loginService;
+  private final RefreshTokenService refreshTokenService;
 
 
  @PostMapping("/register/{role}") // role should be "admin"/"teacher"/"student"
@@ -45,5 +48,11 @@ public class AuthController {
    return ApiResponseFactory.success(this.loginService.login(loginRequestDTO, request));
   }
 
-
+  @PostMapping("/refresh-token")
+  @ResponseStatus(value = HttpStatus.OK)
+  public ApiResponseFactory<LoginResponseDTO> refreshToken(
+      @Valid @RequestBody RefreshTokenRequestDTO requestDTO
+  ) {
+   return ApiResponseFactory.success(this.refreshTokenService.refreshToken(requestDTO));
+  }
 }
