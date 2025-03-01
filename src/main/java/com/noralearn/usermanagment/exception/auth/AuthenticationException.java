@@ -13,5 +13,4 @@ public class AuthenticationException extends CustomException {
   public AuthenticationException(String message) {
     super(HttpStatus.UNAUTHORIZED, "authentication-failure", message);
   }
-
 }
