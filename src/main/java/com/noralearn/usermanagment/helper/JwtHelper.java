@@ -15,6 +15,7 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import javax.crypto.SecretKey;
@@ -77,12 +78,25 @@ public class JwtHelper {
       throw new ExpiredTokenException();
     } catch (SignatureException | MalformedJwtException ex) {
       throw new InvalidSignatureException();
-    } catch (Exception ex){
+    } catch (Exception ex) {
       throw new AuthenticationException(ex.getMessage());
     }
   }
 
-  private AuthToken generateToken(IAuthenticable authEntity, Duration duration, SecretKey tokenSecret, TokenType tokenType) {
+  public long getExpirationTTL(String token, TokenType tokenType) {
+    Claims claims = this.extractClaim(token, tokenType);
+    Date expirationDate = claims.getExpiration();
+    long ttl = (expirationDate.getTime() - Instant.now().toEpochMilli()) / 1000;
+
+    return Math.max(ttl, 0);
+  }
+
+  private AuthToken generateToken(
+      IAuthenticable authEntity,
+      Duration duration,
+      SecretKey tokenSecret,
+      TokenType tokenType
+  ) {
   final ZonedDateTime now = ZonedDateTime.now();
   final ZonedDateTime expiredTime = now.plus(duration);
 
@@ -102,7 +116,6 @@ public class JwtHelper {
       .expiredAt(expiredTime)
       .build();
   }
-
 
   private SecretKey getSecretKey(TokenType tokenType) {
    return switch (tokenType){

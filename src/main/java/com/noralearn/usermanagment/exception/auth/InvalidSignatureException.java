@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 public class InvalidSignatureException extends CustomException {
 
-  public InvalidSignatureException(){
+  public InvalidSignatureException() {
     super(HttpStatus.UNAUTHORIZED, "invalid-signature", "Invalid token signature.");
   }
 }

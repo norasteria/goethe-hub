@@ -3,6 +3,8 @@ package com.noralearn.usermanagment.filter;
 import com.noralearn.usermanagment.enums.TokenType;
 import com.noralearn.usermanagment.exception.auth.AuthenticationException;
 import com.noralearn.usermanagment.helper.JwtHelper;
+import com.noralearn.usermanagment.helper.RequestHeaderHelper;
+import com.noralearn.usermanagment.service.RedisTokenService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -24,22 +26,26 @@ public class JwtFilter extends OncePerRequestFilter {
 
   private final JwtHelper jwtHelper;
 
+  private final RedisTokenService redisTokenService;
+
   @Override
   protected void doFilterInternal(
       HttpServletRequest request,
       HttpServletResponse response,
       FilterChain filterChain
   ) throws ServletException, IOException {
-    String authHeader = request.getHeader("Authorization");
+    String accessToken = RequestHeaderHelper.extractAccessToken(request);
 
-    if (authHeader == null || authHeader.startsWith("Bearer ")){
+    if (accessToken == null) {
       filterChain.doFilter(request, response);
       return;
     }
 
-    String token = authHeader.replace("Bearer ", "");
+    if (redisTokenService.isAccessTokenRevoked(accessToken)) {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Toke has been revoked.");
+    }
 
-    Claims claims = jwtHelper.extractClaim(token, TokenType.USER_TOKEN);
+    Claims claims = jwtHelper.extractClaim(accessToken, TokenType.USER_TOKEN);
     String email= claims.get("email", String.class);
     String role = claims.get("role", String.class);
 

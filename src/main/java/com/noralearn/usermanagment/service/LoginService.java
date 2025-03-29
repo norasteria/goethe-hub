@@ -28,7 +28,7 @@ public class LoginService {
   private String ipAddress;
   private String deviceType;
 
-  public LoginResponseDTO login(LoginRequestDTO requestDTO, HttpServletRequest servletRequest){
+  public LoginResponseDTO login(LoginRequestDTO requestDTO, HttpServletRequest servletRequest) {
     this.ipAddress = this.getIpAddress(servletRequest);
     this.deviceType = requestDTO.getDeviceType();
 
@@ -49,8 +49,8 @@ public class LoginService {
         .build();
   }
 
-  private User validateLogin(LoginRequestDTO loginRequestDTO){
-    User selectedUser = usersRepository
+  private User validateLogin(LoginRequestDTO loginRequestDTO) {
+    final User selectedUser = usersRepository
         .findByEmail(loginRequestDTO.getEmail())
         .orElseThrow(() -> {
           this.saveLoginActivity(LoginStatus.FAILED, null);
@@ -90,7 +90,7 @@ public class LoginService {
   }
 
   private void saveLoginActivity(LoginStatus loginStatus, User selectedUser){
-    LoginActivity loginActivity = LoginActivity.builder()
+    final LoginActivity loginActivity = LoginActivity.builder()
         .status(loginStatus)
         .deviceType(this.deviceType)
         .ipAddress(this.ipAddress)

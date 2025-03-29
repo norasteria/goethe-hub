@@ -12,3 +12,10 @@ services:
       POSTGRES_USERNAME: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+  redis:
+    image: redis:7.2-alpine
+    container_name: goethe_hub_redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    env_file:
+      - .env

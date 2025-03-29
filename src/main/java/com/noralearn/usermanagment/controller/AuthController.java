@@ -7,12 +7,14 @@ import com.noralearn.usermanagment.dto.response.LoginResponseDTO;
 import com.noralearn.usermanagment.factory.ApiResponseFactory;
 import com.noralearn.usermanagment.dto.response.UserDTO;
 import com.noralearn.usermanagment.service.LoginService;
+import com.noralearn.usermanagment.service.LogoutService;
 import com.noralearn.usermanagment.service.RefreshTokenService;
 import com.noralearn.usermanagment.service.RegistrationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +31,7 @@ public class AuthController {
 
   private final LoginService loginService;
   private final RefreshTokenService refreshTokenService;
+  private final LogoutService logoutService;
 
 
  @PostMapping("/register/{role}") // role should be "admin"/"teacher"/"student"
@@ -54,5 +57,11 @@ public class AuthController {
       @Valid @RequestBody RefreshTokenRequestDTO requestDTO
   ) {
    return ApiResponseFactory.success(this.refreshTokenService.refreshToken(requestDTO));
+  }
+
+  @GetMapping("/logout")
+  @ResponseStatus(value = HttpStatus.NO_CONTENT)
+  public void logout(HttpServletRequest request) {
+   this.logoutService.logout(request);
   }
 }

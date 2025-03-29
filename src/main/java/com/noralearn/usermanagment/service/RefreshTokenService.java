@@ -21,15 +21,24 @@ public class RefreshTokenService {
 
   private final JwtHelper jwtHelper;
 
+  private final RedisTokenService redisTokenService;
+
   public LoginResponseDTO refreshToken(RefreshTokenRequestDTO requestDTO) {
     final Claims claims = this.jwtHelper.extractClaim(requestDTO.getRefreshToken(), TokenType.REFRESH_TOKEN);
     final UUID userId = UUID.fromString(claims.getSubject());
+
+    if (!this.redisTokenService.isValidRefreshToken(requestDTO.getRefreshToken())) {
+      throw new AuthenticationException("Invalid refresh token.");
+    }
 
     final User selectedUser = this.usersRepository.findById(userId)
         .orElseThrow(() -> new AuthenticationException("Invalid refresh token."));
 
     final AuthToken accessToken = this.jwtHelper.generateAccessToken(selectedUser);
     final AuthToken refreshToken = this.jwtHelper.generateRefreshToken(selectedUser);
+
+    redisTokenService.deleteRefreshToken(selectedUser.getId());
+    redisTokenService.storeRefreshToken(refreshToken.getToken());
 
     return LoginResponseDTO.builder()
         .user(LoginResponseDTO.UserDetail.builder()
