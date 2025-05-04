@@ -57,6 +57,9 @@ dependencies {
 	// Apache Commons Codec
 	implementation 'commons-codec:commons-codec:1.17.1'
 
+	// Yauaa for user-agent
+	implementation 'nl.basjes.parse.useragent:yauaa:7.30.0'
+
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'

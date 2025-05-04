@@ -48,21 +48,43 @@ public class JwtHelper {
   }
 
   public AuthToken generateAccessToken(IAuthenticable authEntity) {
-    return this.generateToken(
-        authEntity,
-        ACCESS_TOKEN_EXPIRY_TIME,
-        this.accessTokenSecret,
-        TokenType.USER_TOKEN
-    );
+    final ZonedDateTime now = ZonedDateTime.now();
+    final ZonedDateTime expiredTime = now.plus(ACCESS_TOKEN_EXPIRY_TIME);
+
+    final String token = Jwts.builder()
+        .issuer(this.tokenIssuer)
+        .subject(authEntity.getId().toString())
+        .claim("email", authEntity.getEmail())
+        .claim("role", authEntity.getRole().getCodename())
+        .claim("token_type", TokenType.USER_TOKEN)
+        .issuedAt(Date.from(now.toInstant()))
+        .expiration(Date.from(expiredTime.toInstant()))
+        .signWith(this.accessTokenSecret, SIG.HS256)
+        .compact();
+
+    return AuthToken.builder()
+        .token(token)
+        .expiredAt(expiredTime)
+        .build();
   }
 
   public AuthToken generateRefreshToken(IAuthenticable authEntity) {
-    return this.generateToken(
-        authEntity,
-        REFRESH_TOKEN_EXPIRY_TIME,
-        this.refreshTokenSecret,
-        TokenType.REFRESH_TOKEN
-    );
+    final ZonedDateTime now = ZonedDateTime.now();
+    final ZonedDateTime expiredTime = now.plus(REFRESH_TOKEN_EXPIRY_TIME);
+
+    final String token = Jwts.builder()
+        .issuer(this.tokenIssuer)
+        .subject(authEntity.getId().toString())
+        .claim("token_type", TokenType.REFRESH_TOKEN)
+        .issuedAt(Date.from(now.toInstant()))
+        .expiration(Date.from(expiredTime.toInstant()))
+        .signWith(this.refreshTokenSecret, SIG.HS256)
+        .compact();
+
+    return AuthToken.builder()
+        .token(token)
+        .expiredAt(expiredTime)
+        .build();
   }
 
   public Claims extractClaim(String token, TokenType tokenType) {
@@ -89,32 +111,6 @@ public class JwtHelper {
     long ttl = (expirationDate.getTime() - Instant.now().toEpochMilli()) / 1000;
 
     return Math.max(ttl, 0);
-  }
-
-  private AuthToken generateToken(
-      IAuthenticable authEntity,
-      Duration duration,
-      SecretKey tokenSecret,
-      TokenType tokenType
-  ) {
-  final ZonedDateTime now = ZonedDateTime.now();
-  final ZonedDateTime expiredTime = now.plus(duration);
-
-  final String token = Jwts.builder()
-      .issuer(this.tokenIssuer)
-      .subject(authEntity.getId().toString())
-      .claim("email", authEntity.getEmail())
-      .claim("role", authEntity.getRole().getCodename())
-      .claim("token_type", tokenType)
-      .issuedAt(Date.from(now.toInstant()))
-      .expiration(Date.from(expiredTime.toInstant()))
-      .signWith(tokenSecret, SIG.HS256)
-      .compact();
-
-  return AuthToken.builder()
-      .token(token)
-      .expiredAt(expiredTime)
-      .build();
   }
 
   private SecretKey getSecretKey(TokenType tokenType) {

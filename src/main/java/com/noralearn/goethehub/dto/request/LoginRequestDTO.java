@@ -1,6 +1,5 @@
 package com.noralearn.usermanagment.dto.request;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,8 +19,4 @@ public class LoginRequestDTO {
 
   @NotBlank
   private String password;
-
-  @NotBlank
-  private String deviceType;
-
 }

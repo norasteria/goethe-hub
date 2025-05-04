@@ -21,6 +21,7 @@ public class LoginService {
 
   private final BCryptPasswordEncoder passwordEncoder;
   private final JwtHelper jwtHelper;
+  private final RedisTokenService redisTokenService;
 
   private final UsersRepository usersRepository;
   private final LoginActivityRepository loginActivityRepository;
@@ -29,13 +30,16 @@ public class LoginService {
   private String deviceType;
 
   public LoginResponseDTO login(LoginRequestDTO requestDTO, HttpServletRequest servletRequest) {
+    String rawUserAgent = RequestHeaderHelper.extractUserAgent(servletRequest);
+    this.deviceType = UserAgentHelper.buildDeviceTypeByUserAgent(rawUserAgent);
     this.ipAddress = this.getIpAddress(servletRequest);
-    this.deviceType = requestDTO.getDeviceType();
 
     User selectedUser = this.validateLogin(requestDTO);
 
     final AuthToken accessToken = this.jwtHelper.generateAccessToken(selectedUser);
     final AuthToken refreshToken = this.jwtHelper.generateRefreshToken(selectedUser);
+
+    this.redisTokenService.storeRefreshToken(refreshToken.getToken());
 
     return LoginResponseDTO.builder()
         .accessToken(accessToken.getToken())
@@ -51,9 +55,9 @@ public class LoginService {
 
   private User validateLogin(LoginRequestDTO loginRequestDTO) {
     final User selectedUser = usersRepository
-        .findByEmail(loginRequestDTO.getEmail())
+        .findByEmailAndIsActive(loginRequestDTO.getEmail(), true)
         .orElseThrow(() -> {
-          this.saveLoginActivity(LoginStatus.FAILED, null);
+          this.saveLoginActivity(AuthActivityStatus.LOGIN_FAILED, null);
           return new AuthenticationException("No email found.");
         });
 
@@ -64,11 +68,11 @@ public class LoginService {
 
     final int countTodayFailedTodayLogin = this.loginActivityRepository.countFailedLoginAttemptsToday(
         selectedUser.getId(),
-        LoginStatus.FAILED.name()
+        AuthActivityStatus.LOGIN_FAILED.name()
     );
 
     if (countTodayFailedTodayLogin > 2) {
-      this.saveLoginActivity(LoginStatus.SUSPENDED, selectedUser);
+      this.saveLoginActivity(AuthActivityStatus.LOGIN_SUSPENDED, selectedUser);
       selectedUser.setActive(false);
       this.usersRepository.save(selectedUser);
       throw new AuthenticationException("This account has been suspended.");
@@ -80,29 +84,27 @@ public class LoginService {
     );
 
     if (!isPasswordMatch) {
-      this.saveLoginActivity(LoginStatus.FAILED, selectedUser);
+      this.saveLoginActivity(AuthActivityStatus.LOGIN_FAILED, selectedUser);
       throw new AuthenticationException();
     }
 
-    this.saveLoginActivity(LoginStatus.SUCCESS, selectedUser);
+    this.saveLoginActivity(AuthActivityStatus.LOGIN_SUCCESS, selectedUser);
 
     return selectedUser;
   }
 
-  private void saveLoginActivity(LoginStatus loginStatus, User selectedUser){
+  private void saveLoginActivity(AuthActivityStatus authActivityStatus, User selectedUser){
     final LoginActivity loginActivity = LoginActivity.builder()
-        .status(loginStatus)
+        .status(authActivityStatus)
         .deviceType(this.deviceType)
         .ipAddress(this.ipAddress)
         .user(selectedUser)
         .build();
 
     this.loginActivityRepository.save(loginActivity);
-
   }
 
   private String getIpAddress(HttpServletRequest servletRequest){
     return servletRequest.getRemoteAddr();
   }
-
 }

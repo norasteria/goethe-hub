@@ -6,7 +6,6 @@ import com.noralearn.usermanagment.helper.JwtHelper;
 import com.noralearn.usermanagment.helper.RequestHeaderHelper;
 import com.noralearn.usermanagment.service.RedisTokenService;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

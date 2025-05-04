@@ -9,5 +9,4 @@ public class GoetheHubApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GoetheHubApplication.class, args);
 	}
-
 }

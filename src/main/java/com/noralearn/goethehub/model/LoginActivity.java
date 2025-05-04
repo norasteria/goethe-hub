@@ -1,6 +1,6 @@
 package com.noralearn.usermanagment.model;
 
-import com.noralearn.usermanagment.enums.LoginStatus;
+import com.noralearn.goethehub.enums.AuthActivityStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -39,7 +39,7 @@ public class LoginActivity extends BaseModel {
   private User user;
 
   @Enumerated(EnumType.STRING)
-  private LoginStatus status;
+  private AuthActivityStatus status;
 
   @NotBlank
   private String deviceType;
