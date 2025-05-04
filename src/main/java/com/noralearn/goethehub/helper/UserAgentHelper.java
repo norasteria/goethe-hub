@@ -14,6 +14,7 @@ public class UserAgentHelper {
             UserAgent.AGENT_NAME_VERSION
         )
         .build()
+        .parse(rawUserAgent)
         .toString();
   }
 }

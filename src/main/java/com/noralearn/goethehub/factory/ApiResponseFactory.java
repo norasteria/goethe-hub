@@ -21,7 +21,7 @@ public class ApiResponseFactory<ResponseData> {
   }
 
   public static <ResponseData> ApiResponseFactory<ResponseData> success(ResponseData data){
-    return new ApiResponseFactory<ResponseData>(ResponseStatusEnum.success, data, null);
+    return new ApiResponseFactory<>(ResponseStatusEnum.success, data, null);
   }
 
   public static ApiResponseFactory<?> error(String code, String message){
