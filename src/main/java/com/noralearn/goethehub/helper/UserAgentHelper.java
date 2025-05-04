@@ -6,7 +6,7 @@ import nl.basjes.parse.useragent.UserAgentAnalyzer;
 public class UserAgentHelper {
 
   public static String buildDeviceTypeByUserAgent(String rawUserAgent) {
-    return UserAgentAnalyzer
+     UserAgent userAgent = UserAgentAnalyzer
         .newBuilder()
         .withFields(
             UserAgent.DEVICE_CLASS,
@@ -14,7 +14,12 @@ public class UserAgentHelper {
             UserAgent.AGENT_NAME_VERSION
         )
         .build()
-        .parse(rawUserAgent)
-        .toString();
+        .parse(rawUserAgent);
+
+     return String.join(":",
+         userAgent.getValue(UserAgent.DEVICE_CLASS),
+         userAgent.getValue(UserAgent.OPERATING_SYSTEM_NAME_VERSION),
+         userAgent.getValue(UserAgent.AGENT_NAME_VERSION)
+     );
   }
 }
