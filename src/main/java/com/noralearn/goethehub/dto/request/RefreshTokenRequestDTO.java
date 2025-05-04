@@ -7,16 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class LoginRequestDTO {
+public class RefreshTokenRequestDTO {
 
   @NotBlank
-  private String email;
-
-  @NotBlank
-  private String password;
+  private String refreshToken;
 }

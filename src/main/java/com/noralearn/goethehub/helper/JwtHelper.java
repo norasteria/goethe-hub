@@ -1,11 +1,11 @@
-package com.noralearn.usermanagment.helper;
+package com.noralearn.goethehub.helper;
 
-import com.noralearn.usermanagment.bean.AuthToken;
-import com.noralearn.usermanagment.bean.IAuthenticable;
-import com.noralearn.usermanagment.enums.TokenType;
-import com.noralearn.usermanagment.exception.auth.AuthenticationException;
-import com.noralearn.usermanagment.exception.auth.ExpiredTokenException;
-import com.noralearn.usermanagment.exception.auth.InvalidSignatureException;
+import com.noralearn.goethehub.bean.AuthToken;
+import com.noralearn.goethehub.bean.IAuthenticable;
+import com.noralearn.goethehub.enums.TokenType;
+import com.noralearn.goethehub.exception.auth.AuthenticationException;
+import com.noralearn.goethehub.exception.auth.ExpiredTokenException;
+import com.noralearn.goethehub.exception.auth.InvalidSignatureException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

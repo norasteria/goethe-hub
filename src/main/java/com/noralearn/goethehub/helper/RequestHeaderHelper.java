@@ -1,4 +1,4 @@
-package com.noralearn.usermanagment.helper;
+package com.noralearn.goethehub.helper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;

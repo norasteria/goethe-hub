@@ -1,4 +1,4 @@
-package com.noralearn.usermanagment.enums;
+package com.noralearn.goethehub.enums;
 
 public enum AuthActivityStatus {
   LOGIN_SUCCESS,

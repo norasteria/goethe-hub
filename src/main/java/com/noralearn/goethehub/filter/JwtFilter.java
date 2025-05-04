@@ -1,10 +1,9 @@
-package com.noralearn.usermanagment.filter;
+package com.noralearn.goethehub.filter;
 
-import com.noralearn.usermanagment.enums.TokenType;
-import com.noralearn.usermanagment.exception.auth.AuthenticationException;
-import com.noralearn.usermanagment.helper.JwtHelper;
-import com.noralearn.usermanagment.helper.RequestHeaderHelper;
-import com.noralearn.usermanagment.service.RedisTokenService;
+import com.noralearn.goethehub.enums.TokenType;
+import com.noralearn.goethehub.helper.JwtHelper;
+import com.noralearn.goethehub.helper.RequestHeaderHelper;
+import com.noralearn.goethehub.service.RedisTokenService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
