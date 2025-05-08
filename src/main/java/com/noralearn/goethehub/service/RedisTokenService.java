@@ -55,6 +55,6 @@ public class RedisTokenService {
   private String getUserIdRefreshToken(String token) {
     return this.jwtHelper
         .extractClaim(token, TokenType.REFRESH_TOKEN)
-        .getIssuer();
+        .getSubject();
   }
 }
