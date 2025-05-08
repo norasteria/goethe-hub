@@ -12,10 +12,12 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LogoutService {
 
   private final UsersRepository usersRepository;
@@ -26,15 +28,15 @@ public class LogoutService {
 
   public void logout(HttpServletRequest servletRequest) {
     final String accessToken = RequestHeaderHelper.extractAccessToken(servletRequest);
+    Claims tokenClaims = this.jwtHelper.extractClaim(accessToken, TokenType.USER_TOKEN);
+    UUID userId = UUID.fromString(tokenClaims.getSubject());
 
     if (accessToken != null) {
       redisTokenService.revokeAccessToken(accessToken);
-      redisTokenService.deleteRefreshToken(accessToken);
+      redisTokenService.deleteRefreshToken(userId);
     }
 
     // Store logout activity
-    Claims tokenClaims = this.jwtHelper.extractClaim(accessToken, TokenType.USER_TOKEN);
-    UUID userId = UUID.fromString(tokenClaims.getIssuer());
     this.usersRepository.findByIdAndIsActive(userId, true)
         .ifPresent(user -> this.saveLogoutActivity(servletRequest, user));
   }

@@ -52,11 +52,6 @@ public class RedisTokenService {
     redisTemplate.delete(REFRESH_TOKEN_PREFIX.formatted(userId));
   }
 
-  public void deleteRefreshToken(String token) {
-    String userId = this.getUserIdRefreshToken(token);
-    redisTemplate.delete(REFRESH_TOKEN_PREFIX.formatted(userId));
-  }
-
   private String getUserIdRefreshToken(String token) {
     return this.jwtHelper
         .extractClaim(token, TokenType.REFRESH_TOKEN)

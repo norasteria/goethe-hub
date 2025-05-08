@@ -59,7 +59,7 @@ public class AuthController {
    return ApiResponseFactory.success(this.refreshTokenService.refreshToken(requestDTO));
   }
 
-  @GetMapping("/logout")
+  @PostMapping("/logout")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   public void logout(HttpServletRequest request) {
    this.logoutService.logout(request);
