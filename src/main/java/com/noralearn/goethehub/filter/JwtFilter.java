@@ -40,7 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     if (redisTokenService.isAccessTokenRevoked(accessToken)) {
-      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Toke has been revoked.");
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token  has been revoked.");
     }
 
     Claims claims = jwtHelper.extractClaim(accessToken, TokenType.USER_TOKEN);
