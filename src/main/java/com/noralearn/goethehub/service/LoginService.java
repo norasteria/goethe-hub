@@ -12,6 +12,7 @@ import com.noralearn.goethehub.model.LoginActivity;
 import com.noralearn.goethehub.model.User;
 import com.noralearn.goethehub.repository.LoginActivityRepository;
 import com.noralearn.goethehub.repository.UsersRepository;
+import com.noralearn.goethehub.service.RedisTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
