@@ -3,6 +3,7 @@ package com.noralearn.goethehub.service;
 import com.noralearn.goethehub.enums.TokenType;
 import com.noralearn.goethehub.helper.JwtHelper;
 import com.noralearn.goethehub.helper.TokenHasherHelper;
+import java.time.Duration;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -50,6 +51,17 @@ public class RedisTokenService {
 
   public void deleteRefreshToken(UUID userId) {
     redisTemplate.delete(REFRESH_TOKEN_PREFIX.formatted(userId));
+  }
+
+  public void storeResetPasswordToken(String resetToken, UUID userId) {
+    final String RESET_PASSWORD_TOKEN_PREFIX = "reset_password:%s";
+    final Duration RESET_PASSWORD_TOKEN_TTL = Duration.ofMinutes(15);
+
+    redisTemplate.opsForValue().set(
+        RESET_PASSWORD_TOKEN_PREFIX.formatted(resetToken),
+        userId.toString(),
+        RESET_PASSWORD_TOKEN_TTL
+    );
   }
 
   private String getUserIdRefreshToken(String token) {

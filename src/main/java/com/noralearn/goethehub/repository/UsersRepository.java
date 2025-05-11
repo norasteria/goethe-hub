@@ -10,5 +10,4 @@ public interface UsersRepository extends CrudRepository<User, UUID> {
   Optional<User> findByIdAndIsActive(UUID userId, boolean isActive);
 
   Optional<User> findByEmailAndIsActive(String email, boolean isActive);
-
 }

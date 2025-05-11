@@ -1,11 +1,14 @@
 package com.noralearn.goethehub.controller;
 
+import com.noralearn.goethehub.dto.request.ForgotPasswordRequestDTO;
 import com.noralearn.goethehub.dto.request.LoginRequestDTO;
 import com.noralearn.goethehub.dto.request.RefreshTokenRequestDTO;
 import com.noralearn.goethehub.dto.request.RegisterRequestDTO;
 import com.noralearn.goethehub.dto.response.LoginResponseDTO;
+import com.noralearn.goethehub.dto.response.MessageResponseDTO;
 import com.noralearn.goethehub.factory.ApiResponseFactory;
 import com.noralearn.goethehub.dto.response.UserDTO;
+import com.noralearn.goethehub.service.PasswordRecoveryService;
 import com.noralearn.goethehub.service.LoginService;
 import com.noralearn.goethehub.service.LogoutService;
 import com.noralearn.goethehub.service.RefreshTokenService;
@@ -14,7 +17,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +34,7 @@ public class AuthController {
   private final LoginService loginService;
   private final RefreshTokenService refreshTokenService;
   private final LogoutService logoutService;
+  private final PasswordRecoveryService passwordRecoveryService;
 
 
  @PostMapping("/register/{role}") // role should be "admin"/"teacher"/"student"
@@ -63,5 +66,17 @@ public class AuthController {
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   public void logout(HttpServletRequest request) {
    this.logoutService.logout(request);
+  }
+
+  @PostMapping("/forgot-password")
+  public ApiResponseFactory<MessageResponseDTO> forgotPassword(
+      @Valid @RequestBody ForgotPasswordRequestDTO requestDTO
+  ) {
+  this.passwordRecoveryService.forgotPassword(requestDTO);
+
+   return ApiResponseFactory.success(
+       MessageResponseDTO.builder()
+       .message("Reset password link is ready, please check your email.")
+       .build());
   }
 }
