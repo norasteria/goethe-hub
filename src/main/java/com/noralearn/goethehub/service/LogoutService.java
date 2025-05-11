@@ -4,6 +4,7 @@ import com.noralearn.goethehub.enums.AuthActivityStatus;
 import com.noralearn.goethehub.enums.TokenType;
 import com.noralearn.goethehub.helper.JwtHelper;
 import com.noralearn.goethehub.helper.RequestHeaderHelper;
+import com.noralearn.goethehub.helper.UserAgentHelper;
 import com.noralearn.goethehub.model.LoginActivity;
 import com.noralearn.goethehub.model.User;
 import com.noralearn.goethehub.repository.LoginActivityRepository;
@@ -43,10 +44,11 @@ public class LogoutService {
 
   private void saveLogoutActivity(HttpServletRequest servletRequest, User user) {
     String userAgent = RequestHeaderHelper.extractUserAgent(servletRequest);
+    String deviceType = UserAgentHelper.buildDeviceTypeByUserAgent(userAgent);
 
     final LoginActivity loginActivity = LoginActivity.builder()
         .status(AuthActivityStatus.LOGOUT)
-        .deviceType(userAgent)
+        .deviceType(deviceType)
         .ipAddress(servletRequest.getRemoteAddr())
         .user(user)
         .build();
