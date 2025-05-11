@@ -16,7 +16,7 @@ public class RedisTokenService {
   private final String ACCESS_TOKEN_PREFIX = "revoked:access:%s";
   private final String REFRESH_TOKEN_PREFIX = "refresh:%s";
 
-  final String RESET_PASSWORD_TOKEN_PREFIX = "reset_password:%s";
+  private final String RESET_PASSWORD_TOKEN_PREFIX = "reset_password:%s";
 
   private final RedisTemplate<String, String> redisTemplate;
 
