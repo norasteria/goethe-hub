@@ -4,6 +4,7 @@ import com.noralearn.goethehub.dto.request.ForgotPasswordRequestDTO;
 import com.noralearn.goethehub.dto.request.LoginRequestDTO;
 import com.noralearn.goethehub.dto.request.RefreshTokenRequestDTO;
 import com.noralearn.goethehub.dto.request.RegisterRequestDTO;
+import com.noralearn.goethehub.dto.request.ResetPasswordDTO;
 import com.noralearn.goethehub.dto.response.LoginResponseDTO;
 import com.noralearn.goethehub.dto.response.MessageResponseDTO;
 import com.noralearn.goethehub.factory.ApiResponseFactory;
@@ -78,5 +79,19 @@ public class AuthController {
        MessageResponseDTO.builder()
        .message("Reset password link is ready, please check your email.")
        .build());
+  }
+
+  @PostMapping("/reset-password")
+  public ApiResponseFactory<MessageResponseDTO> resetPassword(
+      @Valid @RequestBody ResetPasswordDTO requestDTO,
+      HttpServletRequest servletRequest
+  ) {
+  this.passwordRecoveryService.resetPassword(requestDTO, servletRequest);
+
+   return ApiResponseFactory.success(
+       MessageResponseDTO.builder()
+           .message("The related password has updated. Please do re-login.")
+           .build()
+   );
   }
 }

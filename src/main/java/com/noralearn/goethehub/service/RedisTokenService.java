@@ -16,6 +16,8 @@ public class RedisTokenService {
   private final String ACCESS_TOKEN_PREFIX = "revoked:access:%s";
   private final String REFRESH_TOKEN_PREFIX = "refresh:%s";
 
+  final String RESET_PASSWORD_TOKEN_PREFIX = "reset_password:%s";
+
   private final RedisTemplate<String, String> redisTemplate;
 
   private final JwtHelper jwtHelper;
@@ -54,7 +56,6 @@ public class RedisTokenService {
   }
 
   public void storeResetPasswordToken(String resetToken, UUID userId) {
-    final String RESET_PASSWORD_TOKEN_PREFIX = "reset_password:%s";
     final Duration RESET_PASSWORD_TOKEN_TTL = Duration.ofMinutes(15);
 
     redisTemplate.opsForValue().set(
@@ -62,6 +63,16 @@ public class RedisTokenService {
         userId.toString(),
         RESET_PASSWORD_TOKEN_TTL
     );
+  }
+
+  public  UUID getUserIdByResetToken(String resetToken) {
+    final String cachedUserId = redisTemplate.opsForValue().get(RESET_PASSWORD_TOKEN_PREFIX.formatted(resetToken));
+
+    return UUID.fromString(cachedUserId);
+  }
+
+  public void deleteResetToken(String resetToken) {
+    redisTemplate.delete(RESET_PASSWORD_TOKEN_PREFIX.formatted(resetToken));
   }
 
   private String getUserIdRefreshToken(String token) {
