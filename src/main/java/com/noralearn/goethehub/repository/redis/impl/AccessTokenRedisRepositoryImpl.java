@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class AccessTokenRedisRepositoryImpl implements AccessTokenRedisRepository {
 
-  private final String ACCESS_TOKEN_PREFIX = "geothehub:access_token:%s";
+  private final String ACCESS_TOKEN_PREFIX = "geothehub:access:%s";
 
   private final RedisTemplate<String, String> redisTemplate;
 
