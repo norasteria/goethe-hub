@@ -27,13 +27,14 @@ public class LoginService {
 
   private final UsersRepository usersRepository;
   private final LoginActivityRepository loginActivityRepository;
+  private final UserAgentHelper userAgentHelper;
 
   private String ipAddress;
   private String deviceType;
 
   public LoginResponseDTO login(LoginRequestDTO requestDTO, HttpServletRequest servletRequest) {
     String rawUserAgent = RequestHeaderHelper.extractUserAgent(servletRequest);
-    this.deviceType = UserAgentHelper.buildDeviceTypeByUserAgent(rawUserAgent);
+    this.deviceType = this.userAgentHelper.buildDeviceTypeByUserAgent(rawUserAgent);
     this.ipAddress = this.getIpAddress(servletRequest);
 
     User selectedUser = this.validateLogin(requestDTO);

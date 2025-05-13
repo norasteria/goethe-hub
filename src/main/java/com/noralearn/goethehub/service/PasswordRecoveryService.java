@@ -30,6 +30,7 @@ public class PasswordRecoveryService {
   private final LoginActivityRepository loginActivityRepository;
 
   private final RedisTokenService redisTokenService;
+  private final UserAgentHelper userAgentHelper;
 
   public void forgotPassword(ForgotPasswordRequestDTO requestDTO){
     final String resetToken = RandomStringUtils.secure().next(10, true, true);
@@ -64,7 +65,7 @@ public class PasswordRecoveryService {
 
   private void logAuthActivity(User user, HttpServletRequest servletRequest) {
     final String rawUserAgent = RequestHeaderHelper.extractUserAgent(servletRequest);
-    final String deviceType = UserAgentHelper.buildDeviceTypeByUserAgent(rawUserAgent);
+    final String deviceType = this.userAgentHelper.buildDeviceTypeByUserAgent(rawUserAgent);
 
     final LoginActivity loginActivity = LoginActivity.builder()
         .status(AuthActivityStatus.RESET_PASSWORD)
