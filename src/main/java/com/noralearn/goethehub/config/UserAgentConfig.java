@@ -13,7 +13,7 @@ public class UserAgentConfig {
     return UserAgentAnalyzer
         .newBuilder()
         // TODO: will apply after all dev & prod env properly configured
-//        .hideMatcherLoadStats()
+        // .hideMatcherLoadStats()
         .withCache(10000)
         .withFields(
             UserAgent.DEVICE_CLASS,
