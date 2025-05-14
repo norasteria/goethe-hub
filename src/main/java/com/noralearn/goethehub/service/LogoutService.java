@@ -26,6 +26,7 @@ public class LogoutService {
 
   private final RedisTokenService redisTokenService;
   private final JwtHelper jwtHelper;
+  private final UserAgentHelper userAgentHelper;
 
   public void logout(HttpServletRequest servletRequest) {
     final String accessToken = RequestHeaderHelper.extractAccessToken(servletRequest);
@@ -44,7 +45,7 @@ public class LogoutService {
 
   private void saveLogoutActivity(HttpServletRequest servletRequest, User user) {
     String userAgent = RequestHeaderHelper.extractUserAgent(servletRequest);
-    String deviceType = UserAgentHelper.buildDeviceTypeByUserAgent(userAgent);
+    String deviceType = this.userAgentHelper.buildDeviceTypeByUserAgent(userAgent);
 
     final LoginActivity loginActivity = LoginActivity.builder()
         .status(AuthActivityStatus.LOGOUT)

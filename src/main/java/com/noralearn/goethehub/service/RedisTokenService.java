@@ -3,22 +3,21 @@ package com.noralearn.goethehub.service;
 import com.noralearn.goethehub.enums.TokenType;
 import com.noralearn.goethehub.helper.JwtHelper;
 import com.noralearn.goethehub.helper.TokenHasherHelper;
+import com.noralearn.goethehub.repository.redis.AccessTokenRedisRepository;
+import com.noralearn.goethehub.repository.redis.RefreshTokenRedisRepository;
+import com.noralearn.goethehub.repository.redis.ResetPasswordTokenRedisRepository;
 import java.time.Duration;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class RedisTokenService {
 
-  private final String ACCESS_TOKEN_PREFIX = "revoked:access:%s";
-  private final String REFRESH_TOKEN_PREFIX = "refresh:%s";
-
-  private final String RESET_PASSWORD_TOKEN_PREFIX = "reset_password:%s";
-
-  private final RedisTemplate<String, String> redisTemplate;
+  private final AccessTokenRedisRepository accessTokenRedisRepository;
+  private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+  private final ResetPasswordTokenRedisRepository resetPasswordTokenRedisRepository;
 
   private final JwtHelper jwtHelper;
 
@@ -26,13 +25,13 @@ public class RedisTokenService {
     final String hashedToken = TokenHasherHelper.hashToken(token);
     final long ttl = this.jwtHelper.getExpirationTTL(token, TokenType.USER_TOKEN);
 
-    redisTemplate.opsForValue().set(ACCESS_TOKEN_PREFIX.formatted(hashedToken), "revoked", ttl);
+    accessTokenRedisRepository.save(hashedToken, "revoked", ttl);
   }
 
   public boolean isAccessTokenRevoked(String token) {
     final String hashedToken = TokenHasherHelper.hashToken(token);
 
-    return Boolean.TRUE.equals(redisTemplate.hasKey(ACCESS_TOKEN_PREFIX.formatted(hashedToken)));
+    return accessTokenRedisRepository.hasKey(hashedToken);
   }
 
   public void storeRefreshToken(String token) {
@@ -40,39 +39,33 @@ public class RedisTokenService {
     final String userId = this.getUserIdRefreshToken(token);
     final long ttl = this.jwtHelper.getExpirationTTL(token, TokenType.REFRESH_TOKEN);
 
-    redisTemplate.opsForValue().set(REFRESH_TOKEN_PREFIX.formatted(userId), hashedToken, ttl);
+    refreshTokenRedisRepository.save(UUID.fromString(userId), hashedToken, ttl);
   }
 
   public boolean isValidRefreshToken(String token) {
     final String hashedToken = TokenHasherHelper.hashToken(token);
     final String userId = this.getUserIdRefreshToken(token);
-    final String storedToken = redisTemplate.opsForValue().get(REFRESH_TOKEN_PREFIX.formatted(userId));
+    final String storedToken = refreshTokenRedisRepository.find(UUID.fromString(userId));
 
     return hashedToken.equals(storedToken);
   }
 
   public void deleteRefreshToken(UUID userId) {
-    redisTemplate.delete(REFRESH_TOKEN_PREFIX.formatted(userId));
+    refreshTokenRedisRepository.delete(userId);
   }
 
   public void storeResetPasswordToken(String resetToken, UUID userId) {
     final Duration RESET_PASSWORD_TOKEN_TTL = Duration.ofMinutes(15);
 
-    redisTemplate.opsForValue().set(
-        RESET_PASSWORD_TOKEN_PREFIX.formatted(resetToken),
-        userId.toString(),
-        RESET_PASSWORD_TOKEN_TTL
-    );
+    resetPasswordTokenRedisRepository.save(resetToken, userId, RESET_PASSWORD_TOKEN_TTL);
   }
 
   public  UUID getUserIdByResetToken(String resetToken) {
-    final String cachedUserId = redisTemplate.opsForValue().get(RESET_PASSWORD_TOKEN_PREFIX.formatted(resetToken));
-
-    return UUID.fromString(cachedUserId);
+    return resetPasswordTokenRedisRepository.find(resetToken);
   }
 
   public void deleteResetToken(String resetToken) {
-    redisTemplate.delete(RESET_PASSWORD_TOKEN_PREFIX.formatted(resetToken));
+    resetPasswordTokenRedisRepository.delete(resetToken);
   }
 
   private String getUserIdRefreshToken(String token) {

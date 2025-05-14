@@ -1,20 +1,18 @@
 package com.noralearn.goethehub.helper;
 
+import lombok.RequiredArgsConstructor;
 import nl.basjes.parse.useragent.UserAgent;
 import nl.basjes.parse.useragent.UserAgentAnalyzer;
+import org.springframework.stereotype.Component;
 
+@Component
+@RequiredArgsConstructor
 public class UserAgentHelper {
 
-  public static String buildDeviceTypeByUserAgent(String rawUserAgent) {
-     UserAgent userAgent = UserAgentAnalyzer
-        .newBuilder()
-        .withFields(
-            UserAgent.DEVICE_CLASS,
-            UserAgent.OPERATING_SYSTEM_NAME_VERSION,
-            UserAgent.AGENT_NAME_VERSION
-        )
-        .build()
-        .parse(rawUserAgent);
+  private final UserAgentAnalyzer userAgentAnalyzer;
+
+  public  String buildDeviceTypeByUserAgent(String rawUserAgent) {
+    UserAgent userAgent = userAgentAnalyzer.parse(rawUserAgent);
 
      return String.join(":",
          userAgent.getValue(UserAgent.DEVICE_CLASS),
