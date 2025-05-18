@@ -2,12 +2,13 @@ package com.noralearn.goethehub.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.noralearn.goethehub.enums.TokenType;
-import com.noralearn.goethehub.helper.JwtHelper;
-import com.noralearn.goethehub.helper.TokenHasherHelper;
-import com.noralearn.goethehub.repository.redis.AccessTokenRedisRepository;
-import com.noralearn.goethehub.repository.redis.RefreshTokenRedisRepository;
-import com.noralearn.goethehub.repository.redis.ResetPasswordTokenRedisRepository;
+import com.noralearn.goethehub.auth.enums.TokenType;
+import com.noralearn.goethehub.common.service.RedisTokenService;
+import com.noralearn.goethehub.common.helper.JwtHelper;
+import com.noralearn.goethehub.common.helper.TokenHasherHelper;
+import com.noralearn.goethehub.common.repository.redis.AccessTokenRedisRepository;
+import com.noralearn.goethehub.common.repository.redis.RefreshTokenRedisRepository;
+import com.noralearn.goethehub.common.repository.redis.ResetPasswordTokenRedisRepository;
 import io.jsonwebtoken.Claims;
 import java.time.Duration;
 import java.util.UUID;

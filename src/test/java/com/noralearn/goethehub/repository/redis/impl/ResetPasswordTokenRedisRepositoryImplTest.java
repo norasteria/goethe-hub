@@ -2,6 +2,7 @@ package com.noralearn.goethehub.repository.redis.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.noralearn.goethehub.common.repository.redis.impl.ResetPasswordTokenRedisRepositoryImpl;
 import java.time.Duration;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;

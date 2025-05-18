@@ -2,10 +2,11 @@ package com.noralearn.goethehub.helper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.noralearn.goethehub.bean.AuthToken;
-import com.noralearn.goethehub.enums.TokenType;
-import com.noralearn.goethehub.model.Role;
-import com.noralearn.goethehub.model.User;
+import com.noralearn.goethehub.auth.bean.AuthToken;
+import com.noralearn.goethehub.auth.enums.TokenType;
+import com.noralearn.goethehub.acl.model.Role;
+import com.noralearn.goethehub.user.model.User;
+import com.noralearn.goethehub.common.helper.JwtHelper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts.SIG;
 import java.time.Duration;
