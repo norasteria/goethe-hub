@@ -2,7 +2,7 @@ package com.noralearn.goethehub.repository.redis.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.noralearn.goethehub.common.redis.impl.RefreshTokenRedisRepositoryImpl;
+import com.noralearn.goethehub.common.repository.redis.impl.RefreshTokenRedisRepositoryImpl;
 import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;

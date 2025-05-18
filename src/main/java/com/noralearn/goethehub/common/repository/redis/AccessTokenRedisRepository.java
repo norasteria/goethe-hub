@@ -1,4 +1,4 @@
-package com.noralearn.goethehub.common.redis;
+package com.noralearn.goethehub.common.repository.redis;
 
 import java.time.Duration;
 

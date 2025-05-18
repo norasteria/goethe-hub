@@ -1,6 +1,6 @@
-package com.noralearn.goethehub.common.redis.impl;
+package com.noralearn.goethehub.common.repository.redis.impl;
 
-import com.noralearn.goethehub.common.redis.AccessTokenRedisRepository;
+import com.noralearn.goethehub.common.repository.redis.AccessTokenRedisRepository;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
-package com.noralearn.goethehub.common.redis.impl;
+package com.noralearn.goethehub.common.repository.redis.impl;
 
-import com.noralearn.goethehub.common.redis.RefreshTokenRedisRepository;
+import com.noralearn.goethehub.common.repository.redis.RefreshTokenRedisRepository;
 import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
