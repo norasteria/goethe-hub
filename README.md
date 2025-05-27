@@ -1,3 +1,4 @@
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/norasteria/goethe-hub?utm_source=oss&utm_medium=github&utm_campaign=norasteria%2Fgoethe-hub&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 # Run
 1. Run `Docker Desktop`, then go to project repository and run `docker compose up`. This will start the required subsystems (e.g. DB, redis)
 2. Run the application
